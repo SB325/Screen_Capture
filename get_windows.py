@@ -1,33 +1,20 @@
 import win32gui
 import win32con
+import sys
 
-def get_windows():
-    def sort_windows(windows):
+def get_windows(screenname):
+    def sort_windows(windows,screenname):
         sorted_windows = []
-
-        # Find the first entry
-        [print(n) for n in windows]
+        
         for window in windows:
-            if window["hwnd_above"] == 0:
+            if screenname in window['title'] and 'Command Prompt' not \
+            in window['title']:
                 sorted_windows.append(window)
-                break
-            else:
-                raise(IndexError("Could not find first entry"))
-
-        # Follow the trail
-        while True:
-            for window in windows:
-                if sorted_windows[-1]["hwnd"] == window["hwnd_above"]:
-                    sorted_windows.append(window)
-                    break
-            else:
-                break
-
-        # Remove hwnd_above
-        for window in windows:
-            del(window["hwnd_above"])
-
-        return sorted_windows
+        
+        if sorted_windows:
+            return sorted_windows
+        else:
+            raise(IndexError(f"No window matching name: {screenname}"))
 
     def enum_handler(hwnd, results):
         window_placement = win32gui.GetWindowPlacement(hwnd)
@@ -42,17 +29,10 @@ def get_windows():
 
     enumerated_windows = []
     win32gui.EnumWindows(enum_handler,enumerated_windows)
-    return sort_windows(enumerated_windows)
+    return sort_windows(enumerated_windows,screenname)
 
 if __name__ == "__main__":
-    windows = get_windows()
+   if len(sys.argv)>1:
+        sname = sys.argv[1]
+        windows = get_windows(sname)
     
-    for window in windows:
-        print(window)
-    print()
-
-    # Pretty print
-    for window in windows:
-        if window["title"] == "" or not window["visible"]:
-            continue
-        print(window)
