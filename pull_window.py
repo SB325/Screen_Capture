@@ -14,7 +14,7 @@ import base64
 pytesseract.pytesseract.tesseract_cmd = \
         r'C:\Users\sfb_s\AppData\Local\Programs\Tesseract-OCR\tesseract'
 
-def pull_window(name):
+def pull_window(name,crop=[]):
     
     # get window name
     framedata = get_windows(name)
@@ -23,8 +23,11 @@ def pull_window(name):
     
     if (len(frame)):
         # post image to webserver. add crop argument if necessary
-        img = post_image(frame,'call_screenshot.png')
-        img = img.crop((0,10,img.size[0],img.size[1]))
+        if crop:
+            img = post_image(frame,'call_screenshot.png', \
+            crop=crop)
+        else:
+            img = post_image(frame,'call_screenshot.png')
 
     topstring = pytesseract.image_to_string(img)
     str_array = topstring.split('\n')
@@ -36,4 +39,7 @@ if __name__ == "__main__":
     screenname = 'Watchlist'
     if len(sys.argv)>1:
         screenname = sys.argv[1]
-    pull_window(screenname) 
+    if len(sys.argv)>=5:
+        crop = sys.argv[2:6]
+        print(f"{screenname} crop: {crop}")
+    pull_window(screenname,[int(n) for n in crop]) 
