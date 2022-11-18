@@ -31,7 +31,8 @@ def pull_window(name,crop=[]):
 
     topstring = pytesseract.image_to_string(img)
     str_array = topstring.split('\n')
-    print(str_array)
+    str_array = [n.upper() for n in str_array if len(n) and n.isalpha()]
+    #print(str_array)
     
     return str_array
 

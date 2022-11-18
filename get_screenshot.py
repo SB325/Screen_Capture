@@ -6,6 +6,8 @@ from PIL import Image
 import sys
 sys.path.append(r'C:\Users\sfb_s\src\genutils')
 import base64
+from post_image import post_image
+from sms import sms
 
 def get_screenshot(win_name, verbose=False):
 
@@ -34,8 +36,10 @@ def get_screenshot(win_name, verbose=False):
         dcObj,(0,0),win32con.SRCCOPY)
 
     signedIntsArray = dataBitMap.GetBitmapBits(True)
-    img = np.fromstring(signedIntsArray,
+    img = np.frombuffer(signedIntsArray,
             dtype='uint8')
+    #img = np.fromstring(signedIntsArray,
+    #        dtype='uint8')
 
     img.shape = (h,w,4)
 
@@ -49,7 +53,11 @@ def get_screenshot(win_name, verbose=False):
     return img
 
 if __name__=="__main__":
-    frame = get_screenshot('Live News Main@thinkorswim [build 1974]') 
-    if (len(frame)):
-        img = post_image(frame,'windowshot.png')
-
+    messager = sms()
+    while True:
+        frame = get_screenshot('Live News Main@thinkorswim [build 1976]') 
+        if (len(frame)):
+            img = post_image(frame,'windowshot.png',(),True)
+        else:
+            messager.send_sms('The TDA Live News screen NOT FOUND!')    
+        time.sleep(10) 
