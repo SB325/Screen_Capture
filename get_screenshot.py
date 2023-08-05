@@ -8,6 +8,7 @@ sys.path.append(r'C:\Users\sfb_s\src\genutils')
 import base64
 from post_image import post_image
 from sms import sms
+from delay_hour import delay_hour
 
 def get_screenshot(win_name, verbose=False):
 
@@ -54,10 +55,13 @@ def get_screenshot(win_name, verbose=False):
 
 if __name__=="__main__":
     messager = sms()
+    delay = delay_hour()
+
     while True:
+        #delay.wait_between(3,19)
         frame = get_screenshot('Live News Main@thinkorswim [build 1976]') 
         if (len(frame)):
-            img = post_image(frame,'windowshot.png',(),True)
+            img = post_image(frame,'call_screenshot.png',(),True)
         else:
-            messager.send_sms('The TDA Live News screen NOT FOUND!')    
-        time.sleep(10) 
+            messager.send_sms('The TDA Live News screen NOT FOUND!')   
+        time.sleep(10)
